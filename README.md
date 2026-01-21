@@ -1,2 +1,2 @@
-# stm32-bare-metal
+# stm32fun_bare-metal
 STM32 Bare Metal fun
