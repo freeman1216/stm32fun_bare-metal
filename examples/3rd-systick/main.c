@@ -62,7 +62,7 @@ int main(void) {
     RCC->AHB1ENR |= BIT(PINBANK(led));     // Enable GPIO clock for LED
     gpio_set_mode(led, GPIO_MODE_OUTPUT);  // Set blue LED to output mode
 
-    bool led_state = false;
+    bool led_state = true;
     uint32_t now = 0, next_blink = 500; 
 
     while (true) {
