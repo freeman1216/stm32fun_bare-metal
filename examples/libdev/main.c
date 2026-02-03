@@ -2,8 +2,8 @@
  * Systick Blink bare-metal STM32 example
  */
 
-#include <stdbool.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #define BIT(x) (1UL << (x))
 #define PIN(bank, num) ((((bank) - 'A') << 8) | (num))
@@ -21,7 +21,7 @@ struct systick {
     volatile uint32_t CSR, RVR, CVR, CALIB;
 };
 
-#define SYSTICK ((struct systick*)0xe000e010)
+#define SYSTICK ((struct systick *) 0xe000e010)
 
 struct gpio {
     volatile uint32_t MODER, OTYPER, OSPEEDR, PUPDR, IDR, ODR, BSRR, LCKR, AFR[2];
@@ -54,17 +54,19 @@ static inline void gpio_write(uint16_t pin, bool val) {
 static volatile uint32_t s_ticks = 0;
 
 int main(void) {
-    uint16_t led = PIN('C', 13);  // Blue LED
 
-    systick_init(16000000 / 1000);  // 1ms SysTick (assuming 16MHz clock)
+    uint16_t led = PIN('C', 13);           // Blue LED
+
+    systick_init(16000000 / 1000);         // 1ms SysTick (assuming 16MHz clock)
 
     RCC->AHB1ENR |= BIT(PINBANK(led));     // Enable GPIO clock for LED
     gpio_set_mode(led, GPIO_MODE_OUTPUT);  // Set blue LED to output mode
 
     bool led_state = true;
-    uint32_t now = 0, next_blink = 500;
+    uint32_t now = 0, next_blink = 500; 
 
     while (true) {
+
         now = s_ticks;
 
         if (now >= next_blink) {
@@ -72,12 +74,15 @@ int main(void) {
             led_state = !led_state;
             next_blink = now + 500;
         }
+
     }
 
     return 0;
 }
 
-void systick_handler(void) { ++s_ticks; }
+void systick_handler(void) {
+    ++s_ticks;
+}
 
 // Startup code
 __attribute__((naked, noreturn)) void _reset(void) {
@@ -95,4 +100,6 @@ __attribute__((naked, noreturn)) void _reset(void) {
 extern void _estack(void);  // Defined in link.ld
 
 // 16 standard and 91 STM32-specific handlers
-__attribute__((section(".vectors"))) void (*const tab[16 + 91])(void) = {_estack, _reset, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, systick_handler};
+__attribute__((section(".vectors"))) void (*const tab[16 + 91])(void) = {
+    _estack, _reset, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, systick_handler
+};
