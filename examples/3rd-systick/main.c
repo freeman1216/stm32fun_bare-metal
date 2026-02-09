@@ -11,11 +11,11 @@
 #define PINBANK(pin) (pin >> 8)
 
 struct rcc {
-    volatile uint32_t CR, PLLCFGR, CFGR, CIR, AHB1RSTR, AHB2RSTR, AHB3RSTR, RESERVED0, APB1RSTR, APB2RSTR, RESERVED1[2], AHB1ENR, AHB2ENR, AHB3ENR, RESERVED2, APB1ENR, APB2ENR, RESERVED3[2], AHB1LPENR, AHB2LPENR, AHB3LPENR, RESERVED4, APB1LPENR, APB2LPENR, RESERVED5[2], BDCR,
+    uint32_t CR, PLLCFGR, CFGR, CIR, AHB1RSTR, AHB2RSTR, AHB3RSTR, RESERVED0, APB1RSTR, APB2RSTR, RESERVED1[2], AHB1ENR, AHB2ENR, AHB3ENR, RESERVED2, APB1ENR, APB2ENR, RESERVED3[2], AHB1LPENR, AHB2LPENR, AHB3LPENR, RESERVED4, APB1LPENR, APB2LPENR, RESERVED5[2], BDCR,
         CSR, RESERVED6[2], SSCGR, PLLI2SCFGR;
 };
 
-#define RCC ((struct rcc*)0x40023800)
+#define RCC ((volatile struct rcc*)0x40023800)
 
 struct systick {
     volatile uint32_t CSR, RVR, CVR, CALIB;
@@ -30,7 +30,10 @@ struct gpio {
 #define GPIO(bank) ((struct gpio*)(0x40020000 + 0x400 * (bank)))
 
 // Enum values are per datasheet: 0, 1, 2, 3
-enum { GPIO_MODE_INPUT, GPIO_MODE_OUTPUT, GPIO_MODE_AF, GPIO_MODE_ANALOG };
+enum { GPIO_MODE_INPUT,
+       GPIO_MODE_OUTPUT,
+       GPIO_MODE_AF,
+       GPIO_MODE_ANALOG };
 
 static inline void systick_init(uint32_t ticks) {
     SYSTICK->RVR = ticks - 1;                 // Set reload register
@@ -95,4 +98,21 @@ __attribute__((naked, noreturn)) void _reset(void) {
 extern void _estack(void);  // Defined in link.ld
 
 // 16 standard and 91 STM32-specific handlers
-__attribute__((section(".vectors"))) void (*const tab[16 + 91])(void) = {_estack, _reset, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, systick_handler};
+__attribute__((section(".vectors"))) void (*const tab[16 + 91])(void) = {
+    _estack,
+    _reset,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    systick_handler,
+};

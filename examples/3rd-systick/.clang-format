@@ -2,4 +2,16 @@ BasedOnStyle: Google
 IndentWidth: 4
 TabWidth: 4
 UseTab: Never
-ColumnLimit: 280
+ColumnLimit: 0
+
+BinPackArguments: false
+BinPackParameters: false
+AlignAfterOpenBracket: AlwaysBreak
+Cpp11BracedListStyle: false
+
+# This prevents the formatter from pulling the first element 
+# up onto the same line as the opening brace
+KeepEmptyLinesAtTheStartOfBlocks: true
+
+# This forces the closing brace to its own line
+ControlStatementMacros: []
