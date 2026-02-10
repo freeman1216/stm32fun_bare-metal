@@ -11,29 +11,70 @@
 #define PINBANK(pin) (pin >> 8)
 
 struct rcc {
-    uint32_t CR, PLLCFGR, CFGR, CIR, AHB1RSTR, AHB2RSTR, AHB3RSTR, RESERVED0, APB1RSTR, APB2RSTR, RESERVED1[2], AHB1ENR, AHB2ENR, AHB3ENR, RESERVED2, APB1ENR, APB2ENR, RESERVED3[2], AHB1LPENR, AHB2LPENR, AHB3LPENR, RESERVED4, APB1LPENR, APB2LPENR, RESERVED5[2], BDCR,
-        CSR, RESERVED6[2], SSCGR, PLLI2SCFGR;
+    volatile uint32_t CR;
+    volatile uint32_t PLLCFGR;
+    volatile uint32_t CFGR;
+    volatile uint32_t CIR;
+    volatile uint32_t AHB1RSTR;
+    volatile uint32_t AHB2RSTR;
+    volatile uint32_t AHB3RSTR;
+    volatile uint32_t RESERVED0;
+    volatile uint32_t APB1RSTR;
+    volatile uint32_t APB2RSTR;
+    volatile uint32_t RESERVED1[2];
+    volatile uint32_t AHB1ENR;
+    volatile uint32_t AHB2ENR;
+    volatile uint32_t AHB3ENR;
+    volatile uint32_t RESERVED2;
+    volatile uint32_t APB1ENR;
+    volatile uint32_t APB2ENR;
+    volatile uint32_t RESERVED3[2];
+    volatile uint32_t AHB1LPENR;
+    volatile uint32_t AHB2LPENR;
+    volatile uint32_t AHB3LPENR;
+    volatile uint32_t RESERVED4;
+    volatile uint32_t APB1LPENR;
+    volatile uint32_t APB2LPENR;
+    volatile uint32_t RESERVED5[2];
+    volatile uint32_t BDCR;
+    volatile uint32_t CSR;
+    volatile uint32_t RESERVED6[2];
+    volatile uint32_t SSCGR;
+    volatile uint32_t PLLI2SCFGR;
 };
 
-#define RCC ((volatile struct rcc*)0x40023800)
+#define RCC ((struct rcc*)0x40023800)
 
 struct systick {
-    volatile uint32_t CSR, RVR, CVR, CALIB;
+    volatile uint32_t CSR;
+    volatile uint32_t RVR;
+    volatile uint32_t CVR;
+    volatile uint32_t CALIB;
 };
 
 #define SYSTICK ((struct systick*)0xe000e010)
 
 struct gpio {
-    volatile uint32_t MODER, OTYPER, OSPEEDR, PUPDR, IDR, ODR, BSRR, LCKR, AFR[2];
+    volatile uint32_t MODER;
+    volatile uint32_t OTYPER;
+    volatile uint32_t OSPEEDR;
+    volatile uint32_t PUPDR;
+    volatile uint32_t IDR;
+    volatile uint32_t ODR;
+    volatile uint32_t BSRR;
+    volatile uint32_t LCKR;
+    volatile uint32_t AFR[2];
 };
 
 #define GPIO(bank) ((struct gpio*)(0x40020000 + 0x400 * (bank)))
 
 // Enum values are per datasheet: 0, 1, 2, 3
-enum { GPIO_MODE_INPUT,
-       GPIO_MODE_OUTPUT,
-       GPIO_MODE_AF,
-       GPIO_MODE_ANALOG };
+enum {
+    GPIO_MODE_INPUT,
+    GPIO_MODE_OUTPUT,
+    GPIO_MODE_AF,
+    GPIO_MODE_ANALOG,
+};
 
 static inline void systick_init(uint32_t ticks) {
     SYSTICK->RVR = ticks - 1;                 // Set reload register
@@ -80,7 +121,9 @@ int main(void) {
     return 0;
 }
 
-void systick_handler(void) { ++s_ticks; }
+void systick_handler(void) {
+    ++s_ticks;
+}
 
 // Startup code
 __attribute__((naked, noreturn)) void _reset(void) {
