@@ -2,6 +2,7 @@
  * Systick Blink bare-metal STM32 example
  */
 
+#include <inttypes.h>
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -124,11 +125,11 @@ int main(void) {
 
 // Systick interrupt handler
 void systick_handler(void) {
-    ++s_ticks; // Will increase every 1 ms
+    ++s_ticks;  // Will increase every 1 ms
 }
 
 // Startup code
-__attribute__((naked, noreturn)) void _reset(void) { // Naked might cause a warning but is allowed in gcc
+__attribute__((naked, noreturn)) void _reset(void) {  // Naked might cause a warning but is allowed in gcc
     extern long _sbss, _ebss, _sdata, _edata, _sidata;
 
     for (long* dst = &_sbss; dst < &_ebss; dst++) *dst = 0;
